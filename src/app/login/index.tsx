@@ -14,6 +14,7 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { Icon } from "react-native-paper";
 
 export default function Login() {
   const router = useRouter();
@@ -25,6 +26,7 @@ export default function Login() {
   const [loading, setLoading] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     setErrorMessage(null);
@@ -84,7 +86,7 @@ export default function Login() {
           <View style={styles.emailView}>
             <Text style={styles.inputLabel}>Correo electrónico</Text>
             <TextInput
-              style={[styles.input, isFocused && styles.inputFocused]}
+              style={[styles.input]}
               keyboardType="email-address"
               autoCapitalize="none"
               placeholder="tucorreo@ejemplo.com"
@@ -98,17 +100,29 @@ export default function Login() {
           </View>
           <View style={styles.passwordView}>
             <Text style={styles.inputLabel}>Contraseña</Text>
-            <TextInput
-              style={[styles.input, isFocused && styles.inputFocused]}
-              secureTextEntry
-              placeholder="********"
-              value={loginForm.password}
-              onChangeText={(formValue) =>
-                setLoginForm({ ...loginForm, password: formValue })
-              }
-              onFocus={() => setIsFocused(true)}
-              onBlur={() => setIsFocused(false)}
-            />
+            <View style={[styles.inputContainer]}>
+              <TextInput
+                style={styles.input}
+                secureTextEntry={!showPassword}
+                placeholder="********"
+                value={loginForm.password}
+                onChangeText={(formValue) =>
+                  setLoginForm({ ...loginForm, password: formValue })
+                }
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+              />
+              <Pressable
+                onPress={() => setShowPassword(!showPassword)}
+                style={styles.eyeIcon}
+              >
+                <Icon
+                  source={showPassword ? "eye-off" : "eye"}
+                  size={22}
+                  color="#666"
+                />
+              </Pressable>
+            </View>
           </View>
           <Pressable
             onPress={handleLogin}
@@ -160,6 +174,8 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   passwordView: {
+    display: "flex",
+    flexDirection: "column",
     paddingVertical: 15,
   },
   inputLabel: {
@@ -171,10 +187,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 5,
     color: Colors.text.secondary,
-  },
-  inputFocused: {
-    borderColor: Colors.border.focused,
-    borderWidth: 1,
   },
   loginButton: {
     width: "100%",
@@ -197,5 +209,16 @@ const styles = StyleSheet.create({
     color: "#f87171", // rojo claro, legible sobre fondo oscuro
     textAlign: "center",
     fontWeight: "500",
+  },
+  inputContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    borderRadius: 10,
+    padding: 1,
+    backgroundColor: Colors.background.input,
+  },
+  eyeIcon: {
+    padding: 4,
+    marginLeft: 10,
   },
 });

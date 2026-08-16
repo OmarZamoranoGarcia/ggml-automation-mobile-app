@@ -1,7 +1,13 @@
 import { useAuth } from "@/hooks/auth.context";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Icon } from "react-native-paper";
 import { Colors } from "../constants/theme";
 
@@ -31,6 +37,7 @@ export default function Nav() {
   ) : (
     <View style={styles.logoutNav}>
       <Text style={styles.logoutText}>Cerrando sesión</Text>
+      <ActivityIndicator color={Colors.text.button} size="small" />
     </View>
   );
 }
@@ -71,10 +78,11 @@ const styles = StyleSheet.create({
   },
   logoutNav: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "center",
     alignItems: "center",
     padding: 14,
+    gap: 10,
     backgroundColor: Colors.background.primary,
   },
   logoutText: {
