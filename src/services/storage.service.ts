@@ -3,6 +3,7 @@ import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
 
 const TOKEN_KEY = "auth_token";
+const REFRESH_TOKEN_KEY = "auth_refresh_token";
 const USER_KEY = "auth_user";
 
 export interface StoredUser {
@@ -11,7 +12,6 @@ export interface StoredUser {
   role: string;
 }
 
-// Wrapper que unifica la API: SecureStore en nativo (cifrado), AsyncStorage en web
 const secureStorage = {
   async setItem(key: string, value: string): Promise<void> {
     if (Platform.OS === "web") {
@@ -37,13 +37,26 @@ const secureStorage = {
   },
 };
 
-export async function saveSession(token: string, user: StoredUser) {
-  await secureStorage.setItem(TOKEN_KEY, token);
+export async function saveSession(
+  accessToken: string,
+  refreshToken: string,
+  user: StoredUser,
+) {
+  await secureStorage.setItem(TOKEN_KEY, accessToken);
+  await secureStorage.setItem(REFRESH_TOKEN_KEY, refreshToken);
   await secureStorage.setItem(USER_KEY, JSON.stringify(user));
+}
+
+export async function updateAccessToken(accessToken: string) {
+  await secureStorage.setItem(TOKEN_KEY, accessToken);
 }
 
 export async function getToken(): Promise<string | null> {
   return secureStorage.getItem(TOKEN_KEY);
+}
+
+export async function getRefreshToken(): Promise<string | null> {
+  return secureStorage.getItem(REFRESH_TOKEN_KEY);
 }
 
 export async function getUser(): Promise<StoredUser | null> {
@@ -53,5 +66,6 @@ export async function getUser(): Promise<StoredUser | null> {
 
 export async function clearSession() {
   await secureStorage.removeItem(TOKEN_KEY);
+  await secureStorage.removeItem(REFRESH_TOKEN_KEY);
   await secureStorage.removeItem(USER_KEY);
 }
